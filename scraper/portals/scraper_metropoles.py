@@ -30,7 +30,8 @@ def trata_subtitulo(materia):
 def separa_texto(materia):
     div_artigo = materia.find('div', attrs={'class': 'ConteudoNoticiaWrapper-sc-19fsm27-0 hIDPRr m-content'})
     div_social_coluna = div_artigo.find('div', attrs={'class': 'm-social-coluna'})
-    div_social_coluna.decompose()
+    if div_social_coluna:
+        div_social_coluna.decompose()
     paragrafos = div_artigo.find_all('p')
     
     texto = []
