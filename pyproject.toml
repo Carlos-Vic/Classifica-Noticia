@@ -1,0 +1,16 @@
+[project]
+name = "classifica-noticia"
+version = "0.1.0"
+dependencies = [
+    "requests",
+    "beautifulsoup4",
+    "streamlit",
+    "pandas",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
