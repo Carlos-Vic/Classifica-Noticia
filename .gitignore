@@ -1,2 +1,4 @@
 .vscode
 __pycache__
+classifica.db
+classifica_noticia.egg-info
