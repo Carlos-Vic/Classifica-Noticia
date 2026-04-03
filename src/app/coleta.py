@@ -30,7 +30,6 @@ with st.form('coleta_artigos'):
         key='label_radio',
         label='Escolha o viés da matéria:',
         options=['Direita', 'Esquerda'],
-        index=None 
     )
     
     
@@ -50,11 +49,14 @@ def encontra_scraper(url):
 
 @st.dialog('Confirmar matéria')
 def confirmar_materia():
-    st.write('Link', st.session_state['input_url'])
-    st.write('Título: ', st.session_state['artigo']['titulo'])
+    st.write('**Link:** ', st.session_state['input_url'])
+    st.write('**Título:** ', st.session_state['artigo']['titulo'])
     if st.session_state['artigo']['subtitulo']:
-        st.write('Subtítulo: ', st.session_state['artigo']['subtitulo'])
-    st.write('Viés escolhido: ', st.session_state['label_radio'])
+        st.write('**Subtítulo:** ', st.session_state['artigo']['subtitulo'])
+    st.write('**Viés escolhido:** ', st.session_state['label_radio'])
+    
+    with st.expander('Clique para ler o texto do artigo:'):
+        st.write(st.session_state['artigo']['texto'])
     
     confirmar = st.button(label='Confirmar')
     cancelar = st.button(label='Cancelar')
@@ -62,7 +64,6 @@ def confirmar_materia():
     if confirmar:
         db.salva_artigo(st.session_state['artigo'])
         st.session_state['input_url'] = ''
-        st.session_state['label_radio'] = None
         st.session_state['salvo'] = True
         st.rerun()
     
@@ -80,7 +81,10 @@ def editar_materia():
     st.caption('Informações da Matéria')
     st.write(f'**Link**: {st.session_state['input_url']}')
     st.write(f'**Portal**:  {st.session_state['duplicata'][3]}')
-    st.write(f'**Título**: {st.session_state['duplicata'][1]}') 
+    st.write(f'**Título**: {st.session_state['duplicata'][1]}')
+    
+    with st.expander('Clique para ler o texto do artigo:'):
+        st.write(st.session_state['duplicata'][4])
     
     confirmar = st.button(label='Confirmar')
     cancelar = st.button(label='Cancelar')
@@ -113,7 +117,7 @@ if enviar:
         st.error(f'Portal não cadastrado: {dominio_esperado}')
 
 if st.session_state.get('salvo'):
-    st.success('Salvo no Banco de Dados com Sucesso')
+    st.success(f'Matéria "{st.session_state['artigo']['titulo']}" salva com sucesso')
     st.session_state['salvo'] = None
 
 if st.session_state.get('alterado'):
