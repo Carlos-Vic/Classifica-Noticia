@@ -30,7 +30,9 @@ def processa_urls(urls, label):
                 dados = (portal['titulo'], portal['label'], portal['portal'], url)
                 salvos_no_banco.append(dados)
         else:
-            portais_nao_cadastrados.append((dominio_esperado, url))
+            dados = (dominio_esperado, url)
+            portais_nao_cadastrados.append(dados)
+            db.registra_portal_sem_scraper(dados)
         
     return salvos_no_banco, duplicatas, portais_nao_cadastrados
 

@@ -1,0 +1,1 @@
+ INSERT INTO portais_demanda (portal, url) VALUES (?, ?)

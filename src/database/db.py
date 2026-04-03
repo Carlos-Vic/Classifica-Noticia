@@ -48,3 +48,12 @@ def troca_vies(novo_vies, idMateria):
         
         dados = (novo_vies, idMateria)
         cursor.execute(sql_script, dados)
+
+def registra_portal_sem_scraper(dados):
+    with sqlite3.connect(DB_PATH) as conn:
+        cursor = conn.cursor()
+        
+        with open(QUERIES_DIR / 'insert_portais_faltantes.sql', 'r') as file:
+            sql_script = file.read()
+            
+        cursor.execute(sql_script, dados)

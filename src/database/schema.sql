@@ -9,3 +9,9 @@ CREATE TABLE IF NOT EXISTS artigos(
     url TEXT NOT NULL,
     dataColeta TEXT
 );
+
+CREATE TABLE IF NOT EXISTS portais_demanda (
+    idPortal INTEGER PRIMARY KEY AUTOINCREMENT,
+    portal TEXT NOT NULL,
+    url TEXT NOT NULL
+);
