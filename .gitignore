@@ -2,3 +2,4 @@
 __pycache__
 classifica.db
 classifica_noticia.egg-info
+.env

@@ -6,6 +6,7 @@ dependencies = [
     "beautifulsoup4",
     "streamlit",
     "pandas",
+    "python-dotenv",
 ]
 
 [tool.setuptools.packages.find]
