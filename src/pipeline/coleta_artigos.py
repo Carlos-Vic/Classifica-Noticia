@@ -14,7 +14,13 @@ def menu(entrada, url):
     materia = dic[entrada].parser(url)
     label = input('Digite o label d ou e: ')
     materia.update({'label':label, 'dataColeta':data_formatada})
-    db.salva_artigo(materia)
+    duplicata = db.verifica_duplicata(materia)
+    
+    if duplicata:
+        print('Essa matéria já foi registrada anteriormente', duplicata[0])
+    else: 
+        db.salva_artigo(materia)
+        print('Matéria salva com sucesso')
     
     
 entrada = input('Digite o portal g1, cnn, jbr, bdf, cbr, mtr, vn: ')
