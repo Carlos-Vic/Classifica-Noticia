@@ -29,7 +29,7 @@ def separa_texto(materia):
     return ''.join(texto).replace('\xa0', '')
 
 def trata_data(materia):
-    data = materia.find('time', attrs={'class': 'entry-date published updated'})
+    data = materia.find('time')
     data_str = data.text[:10]
     data_obj = datetime.strptime(data_str, '%d/%m/%Y').date()
     
