@@ -36,15 +36,13 @@ def verifica_subtitulo(div_titulo):
 def separa_texto(materia):
     div_artigo = materia.find('div', attrs={'class': 'cb-content-materia'})
     div_ler_mais = div_artigo.find('div', attrs={'class': 'read-more'})
+    if div_ler_mais:
+        div_ler_mais.decompose()
     paragrafos = div_artigo.find_all('p', attrs={'class': 'texto'})
-    
+     
     texto = []
-    for p in div_artigo.children:
-        if p == div_ler_mais:
-            break
-        if p in paragrafos:
-            temp = p.text
-            texto.append(temp)
+    for p in paragrafos:
+        texto.append(p.text)
     
     return ''.join(texto)
 
