@@ -57,3 +57,14 @@ def registra_portal_sem_scraper(dados):
             sql_script = file.read()
             
         cursor.execute(sql_script, dados)
+
+def mostra_portal_sem_scraper():
+    with sqlite3.connect(DB_PATH) as conn:
+        cursor = conn.cursor()
+        
+        with open(QUERIES_DIR / 'select_portal_faltante.sql', 'r') as file:
+            sql_script = file.read()
+        
+        cursor.execute(sql_script)
+        
+        return cursor.fetchall()
