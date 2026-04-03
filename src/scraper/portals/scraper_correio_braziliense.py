@@ -42,7 +42,9 @@ def separa_texto(materia):
      
     texto = []
     for p in paragrafos:
-        texto.append(p.text)
+        texto_limpo = p.text.strip()
+        if texto_limpo:
+            texto.append(texto_limpo)
     
     return ''.join(texto)
 
