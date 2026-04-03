@@ -30,7 +30,7 @@ def processa_urls(urls, label):
                 dados = (portal['titulo'], portal['label'], portal['portal'], url)
                 salvos_no_banco.append(dados)
         else:
-            dados = (dominio_esperado, url)
+            dados = (dominio_esperado, url, label)
             portais_nao_cadastrados.append(dados)
             db.registra_portal_sem_scraper(dados)
         
@@ -74,7 +74,7 @@ if enviar:
     
     st.error(f'{len(portais_nao_cadastrados)} portais não cadastrados')
     with st.expander('Ver detalhes'):
-        for dominio_esperado, url in portais_nao_cadastrados:
+        for dominio_esperado, url, _ in portais_nao_cadastrados:
             st.write(f'Portal não Cadastrado: {dominio_esperado}')
             st.write(f'Link: {url}')
             st.divider()
