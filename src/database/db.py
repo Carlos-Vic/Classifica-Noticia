@@ -38,3 +38,13 @@ def verifica_duplicata(dicionario):
             return resultado
         else:
             return None
+
+def troca_vies(novo_vies, idMateria):
+    with sqlite3.connect(DB_PATH) as conn:
+        cursor = conn.cursor()
+        
+        with open(QUERIES_DIR / 'update_label.sql', 'r') as file:
+            sql_script = file.read()
+        
+        dados = (novo_vies, idMateria)
+        cursor.execute(sql_script, dados)
