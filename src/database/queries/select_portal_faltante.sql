@@ -6,3 +6,4 @@ WITH tb_count AS(
 
 SELECT * FROM tb_count
 ORDER BY quantidade DESC
+LIMIT 5
