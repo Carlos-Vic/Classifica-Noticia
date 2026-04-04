@@ -18,12 +18,17 @@ def parser(url):
     
 def separa_texto(materia):
     div = materia.find('div', attrs={'class': 'post-content'})
-    paragrafos = div.find_all('p')
+    legenda_video = div.find('figcaption', attrs={'class': 'wp-element-caption'})
     
     texto = []
-    for p in paragrafos:
-        temp = p.text
-        texto.append(temp)
+    
+    if legenda_video:
+        texto.append(legenda_video.text)
+    else:
+        paragrafos = div.find_all('p')
+        for p in paragrafos:
+            temp = p.text
+            texto.append(temp)
     
     return ''.join(texto)
 
