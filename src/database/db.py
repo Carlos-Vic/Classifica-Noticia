@@ -68,3 +68,30 @@ def mostra_portal_sem_scraper():
         cursor.execute(sql_script)
         
         return cursor.fetchall()
+
+def mostra_artigos(offset, portal=None, label=None):
+    with sqlite3.connect(DB_PATH) as conn:
+        cursor = conn.cursor()
+
+        filtros = []
+        dados = []
+
+        if portal:
+            filtros.append('portal = ?')
+            dados.append(portal)
+        if label:
+            filtros.append('label = ?')
+            dados.append(label)
+
+        where = ' WHERE ' + ' AND '.join(filtros) if filtros else ''
+
+        sql_artigos = 'SELECT * FROM artigos' + where + ' LIMIT 10 OFFSET ?'
+        sql_count = 'SELECT COUNT(*) FROM artigos' + where
+
+        cursor.execute(sql_count, tuple(dados))
+        total = cursor.fetchone()[0]
+
+        cursor.execute(sql_artigos, tuple(dados + [offset]))
+        artigos = cursor.fetchall()
+
+        return artigos, total
