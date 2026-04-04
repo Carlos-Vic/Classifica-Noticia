@@ -36,8 +36,9 @@ def separa_texto(materia):
     
     texto = []
     for p in paragrafos:
-        temp = p.text
-        texto.append(temp)
+        texto_limpo = p.text.strip()
+        if texto_limpo:
+            texto.append(texto_limpo)
     
     return ''.join(texto).replace('\xa0', '')
 
