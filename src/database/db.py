@@ -128,3 +128,14 @@ def registra_erro(url, label, erro, dataColeta):
         dados = (url, label, erro, dataColeta)
         
         cursor.execute(sql_script, dados)
+
+def mostra_erros():
+     with psycopg2.connect(DATABASE_URL) as conn:
+        cursor = conn.cursor()
+    
+        with open(QUERIES_DIR / 'select_erros.sql', 'r') as file:
+            sql_script = file.read()
+        
+        cursor.execute(sql_script)
+        
+        return cursor.fetchall()
