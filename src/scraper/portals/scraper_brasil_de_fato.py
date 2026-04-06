@@ -46,8 +46,8 @@ def trata_data(materia):
       'jul': '07', 'ago': '08', 'set': '09','out': '10', 'nov': '11', 'dez': '12'                                                                                                                  
 }     
     
-    span = materia.find('span', attrs={'class': 'elementor-icon-list-text elementor-post-info__item elementor-post-info__item--type-date'})
-    data_str = span.text[1:12]
+    time = materia.find('time')
+    data_str = time.text.split('-')[0].replace(' ', '')
     data_str = data_str.replace('.', '/')
     
     for mes, numero in meses.items():
