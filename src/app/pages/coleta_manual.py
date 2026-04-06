@@ -1,6 +1,7 @@
 import streamlit as st
 from datetime import date
 from database import db
+import traceback
 from app.utils import portais, encontra_scraper
 
 
@@ -75,22 +76,29 @@ def editar_materia():
 
 if enviar:
     scraper, dominio_esperado = encontra_scraper(url)
+    hoje = date.today() 
     
     if scraper:
-        portal = scraper.parser(url)
-        duplicata = db.verifica_duplicata(portal)
-        st.session_state['duplicata'] = duplicata
-        
-        if not duplicata:
-            hoje = date.today()        
-            st.session_state['artigo'] = portal
-            st.session_state['artigo']['label'] = label
-            st.session_state['artigo']['dataColeta'] = hoje
-            confirmar_materia()     
+        try:
+            portal = scraper.parser(url)
+        except Exception:
+            st.error('Erro ao coletar o link, salvo no registro de erros para possível correção futura')
+            db.registra_erro(url,label, traceback.format_exc(), hoje)
         else:
-            editar_materia()
+            duplicata = db.verifica_duplicata(portal)
+            st.session_state['duplicata'] = duplicata
+            
+            if not duplicata:       
+                st.session_state['artigo'] = portal
+                st.session_state['artigo']['label'] = label
+                st.session_state['artigo']['dataColeta'] = hoje
+                confirmar_materia()     
+            else:
+                editar_materia()
     else:
         st.error(f'Portal não cadastrado: {dominio_esperado}')
+        dados = (dominio_esperado, url, label)
+        db.registra_portal_sem_scraper(dados)
 
 if st.session_state.get('salvo'):
     st.success(f'Matéria "{st.session_state['artigo']['titulo']}" salva com sucesso')
