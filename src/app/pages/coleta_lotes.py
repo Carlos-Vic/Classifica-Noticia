@@ -4,7 +4,9 @@ from datetime import date
 from app.utils import encontra_scraper
 
 with st.form('coleta_em_lotes', clear_on_submit=True):
-    input = st.text_area('Cole o texto aqui')
+    texto = st.text_area('Cole o texto aqui', 
+                         placeholder='Precisa seguir exatamente o formato abaixo: \n\n*DIREITA*\n\nLink1\n\nLink2\n\n...\n\n*ESQUERDA*\n\nLink1\n\nLink2\n\n...',
+                         height=400)
     enviar = st.form_submit_button(label='Enviar')
 
 def processa_urls(urls, label):
@@ -39,7 +41,7 @@ def processa_urls(urls, label):
 
 
 if enviar:
-    separador = input.split('*ESQUERDA*')
+    separador = texto.split('*ESQUERDA*')
     bloco_direita = separador[0]
     bloco_esquerda = separador[1]
 
