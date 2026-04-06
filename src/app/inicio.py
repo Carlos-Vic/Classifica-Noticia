@@ -45,10 +45,11 @@ with col3:
 with col4:
     with st.container(border=True):
         st.subheader('📊 Dashboard')
-        st.write('Acompanhe o progresso da coleta com gráficos de distribuição de viés e portais sem scraper.')
+        st.write('Acompanhe o progresso da coleta com gráficos de distribuição de viés, portais sem scraper e registro de erros de coleta.')
         st.markdown('''
 **Como usar:**
 1. Acesse a página
 2. Os gráficos são gerados automaticamente
 3. Monitore o equilíbrio entre esquerda e direita
+4. Verifique os links que falharam no registro de erros
 ''')
