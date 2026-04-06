@@ -16,3 +16,11 @@ CREATE TABLE IF NOT EXISTS portais_demanda (
     url TEXT NOT NULL UNIQUE,
     label TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS erros (
+    idErro SERIAL PRIMARY KEY,
+    url TEXT NOT NULL UNIQUE,
+    label TEXT NOT NULL,
+    erro TEXT NOT NULL,
+    dataColeta TEXT
+);
