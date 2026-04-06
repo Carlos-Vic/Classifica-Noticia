@@ -100,20 +100,31 @@ def mostra_total_vies():
     with psycopg2.connect(DATABASE_URL) as conn:
         cursor = conn.cursor()
     
-    with open(QUERIES_DIR / 'select_vies_total.sql', 'r') as file:
-        sql_script = file.read()
-    
-    cursor.execute(sql_script)
-    
-    return cursor.fetchall()
+        with open(QUERIES_DIR / 'select_vies_total.sql', 'r') as file:
+            sql_script = file.read()
+        
+        cursor.execute(sql_script)
+        
+        return cursor.fetchall()
 
 def mostra_vies_por_portal():
     with psycopg2.connect(DATABASE_URL) as conn:
         cursor = conn.cursor()
     
-    with open(QUERIES_DIR / 'select_vies_portal.sql', 'r') as file:
-        sql_script = file.read()
+        with open(QUERIES_DIR / 'select_vies_portal.sql', 'r') as file:
+            sql_script = file.read()
+        
+        cursor.execute(sql_script)
+        
+        return cursor.fetchall()
+
+def registra_erro(url, label, erro, dataColeta):
+    with psycopg2.connect(DATABASE_URL) as conn:
+        cursor = conn.cursor()
     
-    cursor.execute(sql_script)
-    
-    return cursor.fetchall()
+        with open(QUERIES_DIR / 'insert_erro.sql', 'r') as file:
+            sql_script = file.read()
+        
+        dados = (url, label, erro, dataColeta)
+        
+        cursor.execute(sql_script, dados)
