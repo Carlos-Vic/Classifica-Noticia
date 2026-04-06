@@ -1,19 +1,26 @@
 [project]
 name = "classifica-noticia"
 version = "0.1.0"
+description = ""
+authors = [
+    {name = "Carlos Victor",email = "carlosvictoralbuquerque221@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.13"
 dependencies = [
-    "requests",
-    "beautifulsoup4",
-    "streamlit",
-    "pandas",
-    "python-dotenv",
-    "psycopg2-binary",
-    "plotly"
+    "requests (>=2.33.1,<3.0.0)",
+    "beautifulsoup4 (>=4.14.3,<5.0.0)",
+    "streamlit (>=1.56.0,<2.0.0)",
+    "pandas (>=3.0.2,<4.0.0)",
+    "python-dotenv (>=1.2.2,<2.0.0)",
+    "psycopg2-binary (>=2.9.11,<3.0.0)",
+    "plotly (>=6.6.0,<7.0.0)"
 ]
 
-[tool.setuptools.packages.find]
-where = ["src"]
 
 [build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+package-mode = false 
