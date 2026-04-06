@@ -6,7 +6,7 @@ portais = {
     'g1': (scraper_g1, 'g1.globo.com'),
     'cnn': (scraper_cnn, 'cnnbrasil.com.br'),
     'brasil de fato': (scraper_brasil_de_fato, 'brasildefato.com.br'),
-    'jornal de brasila': (scraper_jornal_de_brasilia, 'jornaldebrasilia.com.br'),
+    'jornal de brasilia': (scraper_jornal_de_brasilia, 'jornaldebrasilia.com.br'),
     'correio braziliense': (scraper_correio_braziliense,'correiobraziliense.com.br'),
     'metropoles': (scraper_metropoles, 'metropoles.com'),
     'vero noticias': (scraper_vero_noticias,'veronoticias.com'),
