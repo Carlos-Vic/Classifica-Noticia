@@ -6,30 +6,40 @@ Projeto de coleta, rotulagem e classificação automática de notícias polític
 
 ## Fase 1 — Setup e Coleta de Dados
 
-- [ ] Criar ambiente virtual e instalar dependências (`requests`, `beautifulsoup4`, `feedparser`, `scikit-learn`, `pandas`, `joblib`)
-- [ ] Criar o banco SQLite (`data/classifica.db`) com a tabela de artigos (`id`, `titulo`, `texto`, `url`, `portal`, `data_coleta`, `label`)
-- [ ] Implementar `scraper/base_scraper.py` com a lógica base de request + parsing
-- [ ] Implementar scraper do **Jornal de Brasília** (`scraper/portals/jornal_brasilia.py`)
-- [ ] Implementar scraper do **Metrópoles** (`scraper/portals/metropoles.py`)
-- [ ] Implementar scraper do **Correio Braziliense** (`scraper/portals/correio_braziliense.py`)
-- [ ] Implementar scraper do **Brasil de Fato** (`scraper/portals/brasil_de_fato.py`)
-- [ ] Implementar scraper do **G1** (`scraper/portals/g1.py`)
-- [ ] Implementar scraper da **Folha de SP** (`scraper/portals/folha.py`)
-- [ ] Adicionar outros portais conforme necessário
-- [ ] Testar todos os scrapers e validar inserção no banco
+- [x] Criar ambiente virtual e instalar dependências
+- [x] Criar banco de dados (migrado de SQLite para PostgreSQL via Supabase)
+- [x] Implementar `scraper/base_scraper.py` com lógica base de request + parsing
+- [x] Implementar scraper do **G1**
+- [x] Implementar scraper do **Jornal de Brasília**
+- [x] Implementar scraper do **CNN Brasil**
+- [x] Implementar scraper do **Metrópoles**
+- [x] Implementar scraper do **Correio Braziliense**
+- [x] Implementar scraper do **Brasil de Fato**
+- [x] Implementar scraper do **Vero Notícias**
+- [x] Implementar scraper do **blog CB Poder** (mesmo domínio do Correio Braziliense)
 
 ---
 
-## Fase 2 — Rotulagem do Dataset
+## Fase 2 — Interface Streamlit
 
-- [ ] Implementar `labeling/label_tool.py` — CLI que exibe título + trecho e aguarda input (`e` = esquerda, `d` = direita, `s` = skip)
+- [x] Página de **Coleta Manual** — coleta por URL com detecção automática de portal e rotulagem
+- [x] Página de **Coleta em Lote** — coleta via bloco de texto com múltiplas URLs e relatório de resultado
+- [x] Página de **Artigos** — listagem com filtros por portal e viés, paginação
+- [x] Página de **Dashboard** — gráficos de viés geral, viés por portal e portais sem scraper mais demandados
+- [ ] Página de **Início** — apresentação do projeto e descrição das páginas
+- [ ] Deploy no Streamlit Community Cloud com acesso restrito por e-mail
+
+---
+
+## Fase 3 — Rotulagem do Dataset
+
 - [ ] Rotular lote inicial de artigos (meta mínima: **500 artigos**, idealmente 1000+)
-- [ ] Garantir equilíbrio entre classes (aproximadamente 50% esquerda / 50% direita)
+- [ ] Garantir equilíbrio entre classes (~50% esquerda / ~50% direita)
 - [ ] Exportar dataset rotulado para `data/processed/dataset.csv`
 
 ---
 
-## Fase 3 — EDA e Pré-processamento
+## Fase 4 — EDA e Pré-processamento
 
 - [ ] Exploração inicial no `notebooks/EDA.ipynb`:
   - Distribuição de classes
@@ -43,7 +53,7 @@ Projeto de coleta, rotulagem e classificação automática de notícias polític
 
 ---
 
-## Fase 4 — Treinamento do Modelo
+## Fase 5 — Treinamento do Modelo
 
 - [ ] Implementar `model/train.py`:
   - Pipeline: `TfidfVectorizer` → `LogisticRegression` (ou SVM)
@@ -52,23 +62,23 @@ Projeto de coleta, rotulagem e classificação automática de notícias polític
 - [ ] Implementar `model/evaluate.py`:
   - Acurácia, precisão, recall, F1-score
   - Matriz de confusão
-  - Análise de erros (quais artigos o modelo erra mais?)
+  - Análise de erros
 - [ ] Iterar sobre o modelo se necessário (ajuste de hiperparâmetros, features)
 
 ---
 
-## Fase 5 — Pipeline de Produção
+## Fase 6 — Pipeline de Produção
 
-- [ ] Implementar `scraper/rss_reader.py` — lê os feeds RSS dos portais e retorna lista de artigos novos
+- [ ] Implementar `scraper/rss_reader.py` — lê feeds RSS e retorna lista de artigos novos
 - [ ] Implementar `model/predict.py` — carrega `modelo.pkl` e classifica um artigo
-- [ ] Implementar `report/generator.py` — formata a saída no padrão WhatsApp (`*DIREITA*` / `*ESQUERDA*`)
+- [ ] Implementar `report/generator.py` — formata saída no padrão WhatsApp (`*DIREITA*` / `*ESQUERDA*`)
 - [ ] Implementar `pipeline/run.py` — orquestra: RSS → predict → generator → salva/envia relatório
-- [ ] Testar o pipeline completo de ponta a ponta
+- [ ] Testar pipeline completo de ponta a ponta
 - [ ] Configurar agendamento (cron ou `schedule`) para rodar diariamente
 
 ---
 
-## Fase 6 — Deploy (opcional)
+## Fase 7 — Deploy do Pipeline
 
 - [ ] Subir o pipeline em um servidor (VPS, Render, Railway, etc.)
 - [ ] Integrar envio automático via WhatsApp (Z-API, Twilio, Evolution API)
@@ -81,5 +91,4 @@ Projeto de coleta, rotulagem e classificação automática de notícias polític
 
 - [ ] Migrar modelo para BERT em português (`neuralmind/bert-base-portuguese-cased`) quando o dataset for maior
 - [ ] Adicionar categoria neutra (notícias sem viés político claro)
-- [ ] Interface web simples para visualizar o relatório
 - [ ] Versionamento do modelo (MLflow ou similar)
