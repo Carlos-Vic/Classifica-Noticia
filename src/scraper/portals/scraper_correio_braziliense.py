@@ -38,7 +38,7 @@ def separa_texto(materia):
     div_ler_mais = div_artigo.find('div', attrs={'class': 'read-more'})
     if div_ler_mais:
         div_ler_mais.decompose()
-    paragrafos = div_artigo.find_all('p', attrs={'class': 'texto'})
+    paragrafos = div_artigo.find_all('p')
      
     texto = []
     for p in paragrafos:
@@ -46,7 +46,7 @@ def separa_texto(materia):
         if texto_limpo:
             texto.append(texto_limpo)
     
-    return ''.join(texto)
+    return ''.join(texto).replace('\xa0', '')
 
 def trata_data(materia):
     div = materia.find('div', attrs={'class': 'date'})
