@@ -1,1 +1,1 @@
- INSERT OR IGNORE INTO portais_demanda (portal, url, label) VALUES (?, ?, ?)
+ INSERT INTO portais_demanda (portal, url, label) VALUES (%s, %s, %s) ON CONFLICT (url) DO NOTHING

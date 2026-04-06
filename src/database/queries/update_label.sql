@@ -1,3 +1,3 @@
 UPDATE artigos
-SET label = ?
-WHERE idMateria = ?
+SET label = %s
+WHERE idMateria = %s

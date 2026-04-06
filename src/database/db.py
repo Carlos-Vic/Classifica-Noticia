@@ -1,16 +1,16 @@
-import sqlite3
+import psycopg2
 import os
 from pathlib import Path
 from dotenv import load_dotenv
 
 load_dotenv()
 
+DATABASE_URL = os.getenv('DATABASE_URL')
 BASE_DIR = Path(__file__).resolve().parents[2]
-DB_PATH = BASE_DIR / os.getenv('DB_PATH', 'data/classifica.db')
 QUERIES_DIR = BASE_DIR / 'src' / 'database' / 'queries'
 
 def salva_artigo(dicionario):
-    with sqlite3.connect(DB_PATH) as conn:
+    with psycopg2.connect(DATABASE_URL) as conn:
         cursor = conn.cursor()
         
         with open(QUERIES_DIR / 'insert_artigo.sql', 'r') as file:
@@ -23,7 +23,7 @@ def salva_artigo(dicionario):
         cursor.execute(sql_script, dados)
 
 def verifica_duplicata(dicionario):
-    with sqlite3.connect(DB_PATH) as conn:
+    with psycopg2.connect(DATABASE_URL) as conn:
         cursor = conn.cursor()
 
         with open(QUERIES_DIR / 'select_url.sql', 'r') as file:
@@ -40,7 +40,7 @@ def verifica_duplicata(dicionario):
             return None
 
 def troca_vies(novo_vies, idMateria):
-    with sqlite3.connect(DB_PATH) as conn:
+    with psycopg2.connect(DATABASE_URL) as conn:
         cursor = conn.cursor()
         
         with open(QUERIES_DIR / 'update_label.sql', 'r') as file:
@@ -50,7 +50,7 @@ def troca_vies(novo_vies, idMateria):
         cursor.execute(sql_script, dados)
 
 def registra_portal_sem_scraper(dados):
-    with sqlite3.connect(DB_PATH) as conn:
+    with psycopg2.connect(DATABASE_URL) as conn:
         cursor = conn.cursor()
         
         with open(QUERIES_DIR / 'insert_portais_faltantes.sql', 'r') as file:
@@ -59,7 +59,7 @@ def registra_portal_sem_scraper(dados):
         cursor.execute(sql_script, dados)
 
 def mostra_portal_sem_scraper():
-    with sqlite3.connect(DB_PATH) as conn:
+    with psycopg2.connect(DATABASE_URL) as conn:
         cursor = conn.cursor()
         
         with open(QUERIES_DIR / 'select_portal_faltante.sql', 'r') as file:
@@ -70,22 +70,22 @@ def mostra_portal_sem_scraper():
         return cursor.fetchall()
 
 def mostra_artigos(offset, portal=None, label=None):
-    with sqlite3.connect(DB_PATH) as conn:
+    with psycopg2.connect(DATABASE_URL) as conn:
         cursor = conn.cursor()
 
         filtros = []
         dados = []
 
         if portal:
-            filtros.append('portal = ?')
+            filtros.append('portal = %s')
             dados.append(portal)
         if label:
-            filtros.append('label = ?')
+            filtros.append('label = %s')
             dados.append(label)
 
         where = ' WHERE ' + ' AND '.join(filtros) if filtros else ''
 
-        sql_artigos = 'SELECT * FROM artigos' + where + ' LIMIT 10 OFFSET ?'
+        sql_artigos = 'SELECT * FROM artigos' + where + ' LIMIT 10 OFFSET %s'
         sql_count = 'SELECT COUNT(*) FROM artigos' + where
 
         cursor.execute(sql_count, tuple(dados))

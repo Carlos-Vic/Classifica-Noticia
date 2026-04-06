@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS artigos(
-    idMateria INTEGER PRIMARY KEY AUTOINCREMENT,
+    idMateria SERIAL PRIMARY KEY,
     portal TEXT NOT NULL,
     titulo TEXT NOT NULL,
     subtitulo TEXT,
@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS artigos(
 );
 
 CREATE TABLE IF NOT EXISTS portais_demanda (
-    idPortal INTEGER PRIMARY KEY AUTOINCREMENT,
+    idPortal SERIAL PRIMARY KEY,
     portal TEXT NOT NULL,
     url TEXT NOT NULL UNIQUE,
     label TEXT NOT NULL
