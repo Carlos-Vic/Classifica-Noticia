@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 DATABASE_URL = os.getenv('DATABASE_URL')
-BASE_DIR = Path(__file__).resolve().parents[2]
+BASE_DIR = Path(__file__).resolve().parents[2] # Pega a raiz do projeto
 QUERIES_DIR = BASE_DIR / 'src' / 'database' / 'queries'
 
 def salva_artigo(dicionario):
@@ -86,7 +86,7 @@ def mostra_artigos(offset, portal=None, label=None):
         where = ' WHERE ' + ' AND '.join(filtros) if filtros else ''
 
         sql_artigos = 'SELECT * FROM artigos' + where + ' LIMIT 10 OFFSET %s'
-        sql_count = 'SELECT COUNT(*) FROM artigos' + where
+        sql_count = 'SELECT COUNT(*) FROM artigos' + where # Count separado, pois assim da pra saber quantas páginas existe no total
 
         cursor.execute(sql_count, tuple(dados))
         total = cursor.fetchone()[0]
@@ -95,3 +95,25 @@ def mostra_artigos(offset, portal=None, label=None):
         artigos = cursor.fetchall()
 
         return artigos, total
+
+def mostra_total_vies():
+    with psycopg2.connect(DATABASE_URL) as conn:
+        cursor = conn.cursor()
+    
+    with open(QUERIES_DIR / 'select_vies_total.sql', 'r') as file:
+        sql_script = file.read()
+    
+    cursor.execute(sql_script)
+    
+    return cursor.fetchall()
+
+def mostra_vies_por_portal():
+    with psycopg2.connect(DATABASE_URL) as conn:
+        cursor = conn.cursor()
+    
+    with open(QUERIES_DIR / 'select_vies_portal.sql', 'r') as file:
+        sql_script = file.read()
+    
+    cursor.execute(sql_script)
+    
+    return cursor.fetchall()

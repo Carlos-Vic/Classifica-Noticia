@@ -7,7 +7,8 @@ dependencies = [
     "streamlit",
     "pandas",
     "python-dotenv",
-    "psycopg2-binary"
+    "psycopg2-binary",
+    "plotly"
 ]
 
 [tool.setuptools.packages.find]
