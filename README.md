@@ -11,7 +11,7 @@ O projeto tem como objetivo coletar notícias de grandes portais brasileiros, cl
 ```
 *PANORAMA POLÍTICO*
 Panorama diário sobre a conjuntura política no Brasil.
-*26/03/26*
+*06/04/26*
 
 *DIREITA*
 *Título da notícia.*
@@ -30,64 +30,58 @@ A classificação não é baseada apenas em quem é citado na notícia, mas no *
 
 ## Como Funciona
 
-O projeto é dividido em três grandes etapas:
-
 ### 1. Construção do Dataset
-Notícias são coletadas manualmente dos portais via scraping (`requests` + `BeautifulSoup`), armazenadas em um banco SQLite e rotuladas uma a uma através de uma ferramenta CLI simples. O resultado é um dataset de artigos com seus respectivos rótulos (`esquerda` / `direita`).
+Notícias são coletadas dos portais via scraping (`requests` + `BeautifulSoup`) e rotuladas manualmente através de uma interface Streamlit. O resultado é um dataset de artigos com seus respectivos rótulos (`Esquerda` / `Direita`), armazenado em um banco PostgreSQL no Supabase.
 
 ### 2. Treinamento do Modelo
 O dataset rotulado é usado para treinar um modelo de classificação de texto. O pipeline usa `TF-IDF` para vetorização e `Regressão Logística` (ou SVM) como classificador. O modelo treinado é salvo e reutilizado na etapa de produção.
 
 ### 3. Produção
-Em produção, o sistema lê automaticamente os feeds RSS dos portais cadastrados, passa cada notícia pelo modelo treinado, e gera o relatório formatado para WhatsApp. O pipeline roda diariamente via agendamento.
+Em produção, o sistema lê automaticamente os feeds RSS dos portais cadastrados, passa cada notícia pelo modelo treinado e gera o relatório formatado para WhatsApp. O pipeline roda diariamente via agendamento.
 
 ---
 
 ## Portais Monitorados
 
-| Portal | Scraping (dataset) | RSS (produção) |
-|---|---|---|
-| G1 | ✓ | ✓ |
-| Folha de SP | ✓ | ✓ |
-| Correio Braziliense | ✓ | ✓ |
-| Jornal de Brasília | ✓ | ✓ |
-| Metrópoles | ✓ | ✓ |
-| Brasil de Fato | ✓ | ✓ |
-| Outros | a definir | a definir |
+| Portal | Scraper |
+|---|---|
+| G1 | ✓ |
+| CNN Brasil | ✓ |
+| Correio Braziliense | ✓ |
+| Jornal de Brasília | ✓ |
+| Metrópoles | ✓ |
+| Brasil de Fato | ✓ |
+| Vero Notícias | ✓ |
 
 ---
 
 ## Estrutura do Projeto
 
 ```
-classifica-noticia/
-├── data/
-│   ├── raw/              # HTML/JSON bruto coletado pelos scrapers
-│   ├── processed/        # dataset limpo e pronto para treino (CSV)
-│   └── classifica.db     # banco SQLite com artigos e labels
+classifica_noticia/
+├── src/
+│   ├── app/
+│   │   ├── pages/            # páginas da interface Streamlit
+│   │   ├── inicio.py         # página inicial
+│   │   └── utils.py          # dicionário de portais e funções compartilhadas
+│   │
+│   ├── database/
+│   │   ├── queries/          # arquivos .sql separados por operação
+│   │   ├── db.py             # conexão e funções de acesso ao banco
+│   │   └── schema.sql        # definição das tabelas
+│   │
+│   ├── scraper/
+│   │   ├── portals/          # um arquivo por portal
+│   │   └── base_scraper.py   # lógica base de request e parsing
+│   │
+│   └── model/                # pré-processamento, treino, avaliação e predição
 │
-├── scraper/
-│   ├── portals/          # um arquivo por portal (g1.py, folha.py, etc.)
-│   ├── base_scraper.py   # classe base com lógica de request e parsing
-│   └── rss_reader.py     # lê feeds RSS dos portais (usado em produção)
+├── notebooks/
+│   └── EDA.ipynb             # análise exploratória dos dados
 │
-├── labeling/
-│   └── label_tool.py     # CLI para rotulagem manual dos artigos
-│
-├── model/
-│   ├── preprocess.py     # limpeza e normalização do texto
-│   ├── train.py          # treinamento e salvamento do modelo
-│   ├── evaluate.py       # métricas e análise de desempenho
-│   └── predict.py        # carrega o modelo e classifica novos textos
-│
-├── report/
-│   └── generator.py      # gera o relatório formatado para WhatsApp
-│
-├── pipeline/
-│   └── run.py            # entry point de produção: RSS → modelo → relatório
-│
-└── notebooks/
-    └── EDA.ipynb         # análise exploratória dos dados
+├── .env.example              # variáveis de ambiente necessárias
+├── pyproject.toml
+└── TODO.md
 ```
 
 ---
@@ -97,12 +91,13 @@ classifica-noticia/
 | Biblioteca | Uso |
 |---|---|
 | `requests` + `beautifulsoup4` | Scraping dos portais |
-| `feedparser` | Leitura dos feeds RSS |
-| `sqlite3` | Armazenamento dos artigos |
+| `psycopg2` | Conexão com o banco PostgreSQL |
+| `python-dotenv` | Gerenciamento de variáveis de ambiente |
+| `streamlit` | Interface de coleta, rotulagem e visualização |
+| `plotly` | Gráficos no dashboard |
 | `pandas` | Manipulação do dataset |
 | `scikit-learn` | TF-IDF, treinamento e avaliação do modelo |
 | `joblib` | Salvar e carregar o modelo treinado |
-| `schedule` | Agendamento do pipeline em produção |
 
 ---
 
@@ -110,7 +105,7 @@ classifica-noticia/
 
 ```
 [DATASET]
-Portais → scraper → SQLite → label_tool (rotulagem manual) → dataset.csv
+Portais → scraper → PostgreSQL (Supabase) → interface Streamlit (rotulagem) → dataset.csv
 
 [TREINAMENTO]
 dataset.csv → preprocess → TF-IDF + Classificador → modelo.pkl
@@ -125,9 +120,9 @@ RSS feeds → rss_reader → predict (modelo.pkl) → generator → relatório W
 
 A classificação é baseada no **viés e perspectiva** do conteúdo, não apenas nos personagens citados. Exemplos:
 
-- Notícia do *Brasil de Fato* criticando Ibaneis → **esquerda**
-- Coluna do *Jornal de Brasília* defendendo Bolsonaro → **direita**
-- Notícia neutra sobre votação na CLDF → depende do enquadramento
+- Notícia do *Brasil de Fato* criticando Ibaneis → **Esquerda**
+- Coluna do *Jornal de Brasília* defendendo Bolsonaro → **Direita**
+- Notícia neutra sobre votação → depende do enquadramento
 
 O modelo aprende esse padrão a partir dos exemplos rotulados manualmente.
 
@@ -136,7 +131,9 @@ O modelo aprende esse padrão a partir dos exemplos rotulados manualmente.
 ## Roadmap
 
 - [x] Definição da arquitetura
-- [ ] Implementação dos scrapers
+- [x] Implementação dos scrapers
+- [x] Interface Streamlit de coleta e rotulagem
+- [x] Dashboard de acompanhamento
 - [ ] Rotulagem do dataset (meta: 1000 artigos)
 - [ ] Treinamento e avaliação do modelo
 - [ ] Pipeline de produção com RSS
