@@ -1,50 +1,32 @@
-from scraper.base_scraper import coleta_materia
+import json
 from datetime import datetime
+from bs4 import BeautifulSoup
+from scraper.base_scraper import coleta_materia
+
 
 def parser(url):
     materia = coleta_materia(url)
-    titulo = materia.find('h1', attrs={'class':'Text__TextBase-sc-1d75gww-0 TcJvw'})
-    subtitulo = trata_subtitulo(materia)
-    texto = separa_texto(materia)
-    data = trata_data(materia)
-    
+    script = materia.find('script', id='__NEXT_DATA__')
+    data = json.loads(script.string)
+    noticia = data['props']['pageProps']['dadosDaNoticia']
+
+    titulo = noticia['title']
+    subtitulo = noticia.get('excerpt') or None
+    texto = separa_texto(noticia['content'])
+    data_pub = datetime.fromisoformat(noticia['date']).date()
+
     return {
-        'portal' : 'metropoles',
-        'titulo' : titulo.text,
-        'subtitulo' : subtitulo,
-        'texto' : texto,
-        'dataPublicacao' : data,
+        'portal': 'metropoles',
+        'titulo': titulo,
+        'subtitulo': BeautifulSoup(subtitulo, 'html.parser').get_text().strip() if subtitulo else None,
+        'texto': texto,
+        'dataPublicacao': data_pub,
         'url': url,
     }
-    
 
-def trata_subtitulo(materia):
-    subtitulo = materia.find('h2', attrs={'class': 'Text__TextBase-sc-1d75gww-0 eOYeiH noticiaCabecalho__subtitulo'})
-    
-    if subtitulo:
-        return subtitulo.text
-    else:
-        return None
-    
 
-def separa_texto(materia):
-    div_artigo = materia.find('div', class_=lambda c: c and 'ConteudoNoticiaWrapper__Artigo' in c)
-    div_social_coluna = div_artigo.find('div', attrs={'class': 'm-social-coluna'})
-    if div_social_coluna:
-        div_social_coluna.decompose()
-    paragrafos = div_artigo.find_all('p')
-    
-    texto = []
-    for p in paragrafos:
-        texto_limpo = p.text.strip()
-        if texto_limpo:
-            texto.append(texto_limpo)
-    
+def separa_texto(content_html):
+    soup = BeautifulSoup(content_html, 'html.parser')
+    paragrafos = soup.find_all('p')
+    texto = [p.get_text().strip() for p in paragrafos if p.get_text().strip()]
     return ''.join(texto).replace('\xa0', '')
-
-def trata_data(materia):
-    data = materia.find('time', attrs={'class': 'HeaderNoticiaWrapper__DataPublicacao-sc-4exe2y-3 dAMWSS'})
-    data_str = data.text[:10]
-    data_obj = datetime.strptime(data_str, '%d/%m/%Y').date()
-    
-    return data_obj
