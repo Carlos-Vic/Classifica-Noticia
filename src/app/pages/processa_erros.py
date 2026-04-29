@@ -35,6 +35,9 @@ if erros:
         for _, _, _, url in salvos_no_banco:
             db.deleta_erro(url)
         
+        for _, _, _, url in duplicatas:
+            db.deleta_erro(url)
+        
         st.success(f'{len(salvos_no_banco)} matérias salvas')
         with st.expander('Ver detalhes'):
             for titulo, label, portal, url in salvos_no_banco:
