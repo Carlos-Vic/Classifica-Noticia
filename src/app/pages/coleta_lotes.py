@@ -1,8 +1,5 @@
 import streamlit as st
-from database import db
-from datetime import date
-import traceback
-from app.utils import encontra_scraper, portais
+from app.utils import encontra_scraper, portais, processa_urls
 
 with st.form('coleta_em_lotes', clear_on_submit=True):
     st.write('Portais Cadastrados:')
@@ -11,47 +8,6 @@ with st.form('coleta_em_lotes', clear_on_submit=True):
                          placeholder='Precisa seguir exatamente o formato abaixo: \n\n*DIREITA*\n\nLink1\n\nLink2\n\n...\n\n*ESQUERDA*\n\nLink1\n\nLink2\n\n...',
                          height=400)
     enviar = st.form_submit_button(label='Enviar')
-
-def processa_urls(urls, label):
-    portais_nao_cadastrados = []
-    salvos_no_banco = []
-    duplicatas = []
-    erros = []
-    hoje = date.today()
-      
- 
-    for url in urls:
-        scraper, dominio_esperado = encontra_scraper(url)
-            
-        if scraper:
-            try:
-                portal = scraper.parser(url)
-            except Exception:
-                dados = (url, label, traceback.format_exc(), hoje)
-                erros.append(dados)
-                db.registra_erro(*dados)
-                continue
-            
-            duplicata = db.verifica_duplicata(portal)
-                
-            if duplicata:
-                dados = (duplicata[1], duplicata[2], duplicata[3], url)
-                duplicatas.append(dados)
-            else:
-                portal['dataColeta'] = hoje
-                portal['label'] = label
-                db.salva_artigo(portal)
-                dados = (portal['titulo'], portal['label'], portal['portal'], url)
-                salvos_no_banco.append(dados)
-        else:
-            dados = (dominio_esperado, url, label)
-            portais_nao_cadastrados.append(dados)
-            db.registra_portal_sem_scraper(dados)
-        
-        
-    return salvos_no_banco, duplicatas, portais_nao_cadastrados, erros
-
-
 
 if enviar:
     if '*ESQUERDA*' not in texto or '*DIREITA*' not in texto:
