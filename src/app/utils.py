@@ -2,7 +2,7 @@ import traceback
 from datetime import date
 from database import db
 from urllib.parse import urlparse
-from scraper.portals import scraper_cb_poder, scraper_brasil_de_fato, scraper_cnn, scraper_correio_braziliense, scraper_g1, scraper_jornal_de_brasilia, scraper_metropoles, scraper_vero_noticias
+from scraper.portals import scraper_cb_poder, scraper_brasil_de_fato, scraper_cnn, scraper_correio_braziliense, scraper_g1, scraper_jornal_de_brasilia, scraper_metropoles, scraper_vero_noticias, scraper_brasil_247
 
 portais = {
     'cb poder': (scraper_cb_poder, 'blogs.correiobraziliense.com.br'),
@@ -13,6 +13,7 @@ portais = {
     'correio braziliense': (scraper_correio_braziliense,'correiobraziliense.com.br'),
     'metropoles': (scraper_metropoles, 'metropoles.com'),
     'vero noticias': (scraper_vero_noticias,'veronoticias.com'),
+    'brasil 247': (scraper_brasil_247, 'brasil247.com')
 }
 
 def encontra_scraper(url):

@@ -196,3 +196,34 @@ def deleta_erro(url):
             cursor.execute(sql_script, dados)
     finally:
         db_pool.putconn(conn)
+
+def busca_portais_demanda(label):
+    conn = db_pool.getconn()
+    try:
+        with conn:
+            cursor = conn.cursor()
+        
+            with open(QUERIES_DIR / 'select_label_portal_faltante.sql', 'r') as file:
+                sql_script = file.read()
+            
+            dados = (label,)
+            
+            cursor.execute(sql_script, dados)
+            return cursor.fetchall()
+    finally:
+        db_pool.putconn(conn)
+
+def deleta_link_demanda(url):
+    conn = db_pool.getconn()
+    try:
+        with conn:
+            cursor = conn.cursor()
+        
+            with open(QUERIES_DIR / 'delete_link_demanda.sql', 'r') as file:
+                sql_script = file.read()
+            
+            dados = (url,)
+            
+            cursor.execute(sql_script, dados)
+    finally:
+        db_pool.putconn(conn)
