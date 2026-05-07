@@ -44,6 +44,3 @@ def trata_data(materia):
     data_obj = datetime.strptime(data_str, '%d/%m/%Y').date()
     
     return data_obj
-
-teste = input()
-print(parser(teste))
